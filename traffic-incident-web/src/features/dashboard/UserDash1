@@ -1,0 +1,105 @@
+// src/features/dashboard/UserDashboard.tsx
+import { 
+    Users, Car, FileText, 
+    AlertCircle, CheckCircle2, 
+    User 
+  } from 'lucide-react';
+  
+  export const UserDashboard = () => {
+    return (
+      <div className="space-y-6 w-full">
+        {/* Header con información del usuario */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+              <User className="w-8 h-8 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">Bienvenido, Juan Pérez</h1>
+              <p className="text-gray-600">Cédula: 000-0000000-0</p>
+            </div>
+          </div>
+        </div>
+  
+        {/* Grid de información importante */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Vehículos Registrados */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Car className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-medium">Mis Vehículos</h3>
+              </div>
+              <button className="text-blue-600 hover:text-blue-700">Añadir</button>
+            </div>
+            <div className="space-y-3">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium">Toyota Corolla 2020</p>
+                <p className="text-sm text-gray-600">Placa: ABC123</p>
+                <div className="flex items-center mt-2">
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                    Seguro vigente
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          {/* Casos Activos */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <AlertCircle className="w-6 h-6 text-orange-600" />
+                </div>
+                <h3 className="text-lg font-medium">Mis Casos</h3>
+              </div>
+              <button className="text-blue-600 hover:text-blue-700">Ver todos</button>
+            </div>
+            <div className="space-y-3">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium">Caso #12345</p>
+                <p className="text-sm text-gray-600">En proceso</p>
+                <p className="text-xs text-gray-500 mt-1">Actualizado: hace 2 horas</p>
+              </div>
+            </div>
+          </div>
+  
+          {/* Documentos y Vigencias */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <FileText className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-medium">Documentos</h3>
+              </div>
+              <button className="text-blue-600 hover:text-blue-700">Gestionar</button>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p className="font-medium">Licencia de Conducir</p>
+                  <p className="text-xs text-gray-500">Vence: 12/12/2024</p>
+                </div>
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                  Vigente
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p className="font-medium">Seguro Vehículo</p>
+                  <p className="text-xs text-gray-500">Vence: 01/03/2024</p>
+                </div>
+                <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                  Próximo a vencer
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
