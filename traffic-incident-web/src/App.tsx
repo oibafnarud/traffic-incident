@@ -21,6 +21,7 @@ import { ReportIncidentPage } from './features/incidents/ReportIncidentPage';
 import { Toaster } from 'sonner';
 import { AuthProvider } from './context/AuthContext';
 
+
 function App() {
   return (
     <>
@@ -46,17 +47,18 @@ function App() {
            <Route path="profile" element={<ProfilePage />} />
          </Route>
 
-         {/* Rutas de administrador */}
-         <Route path="/admin" element={
-           <ProtectedRoute roles={['admin']}>
-             <MainLayout />
-           </ProtectedRoute>
-         }>
-           <Route index element={<AdminDashboard />} />
-           <Route path="users" element={<UsersPage />} />
-           <Route path="workshops" element={<WorkshopsPage />} />
-           <Route path="insurance-companies" element={<InsurancePage />} />
-         </Route>
+
+          {/* Rutas Admin */}
+          <Route path="/admin" element={
+            <ProtectedRoute roles={['admin']}>
+              <MainLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="workshops" element={<WorkshopsPage />} />
+            <Route path="insurance-companies" element={<InsurancePage />} />
+          </Route>
 
          {/* Rutas DIGESETT */}
          <Route path="/digesett" element={

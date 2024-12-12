@@ -1,21 +1,21 @@
 // src/middleware/ProtectedRoute.tsx
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from '../context/AuthContext';
 
-interface Props {
-  children: React.ReactNode;
-  roles?: string[];
-}
-
-export const ProtectedRoute = ({ children, roles }: Props) => {
-  const { user, isAuthenticated } = useAuth();
+export const ProtectedRoute = ({ children, roles }) => {
+  const { user } = useAuth();
   const location = useLocation();
 
-  if (!isAuthenticated) {
+  // Agregar console.log para debuggear
+  console.log('ProtectedRoute - User:', user);
+  console.log('ProtectedRoute - Required roles:', roles);
+
+  if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (roles && !roles.includes(user?.role || '')) {
+  if (roles && !roles.includes(user.role)) {
+    console.log('ProtectedRoute - Unauthorized role');
     return <Navigate to="/unauthorized" replace />;
   }
 

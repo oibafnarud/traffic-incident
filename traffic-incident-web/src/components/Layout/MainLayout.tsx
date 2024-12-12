@@ -1,15 +1,14 @@
+// src/components/Layout/MainLayout.tsx
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 
 export const MainLayout = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-8 mx-auto max-w-7xl"> {/* Ajustado aquí */}
-        <main>
-          <Outlet />
-        </main>
-      </div>
+      <main className="container mx-auto px-4 py-6">
+        <Outlet />
+      </main>
     </div>
   );
 };

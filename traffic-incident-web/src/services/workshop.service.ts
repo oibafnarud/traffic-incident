@@ -13,12 +13,17 @@ export interface Workshop {
   updatedAt?: string;
 }
 
-export const workshopService = {
-  // Obtener todos los talleres
-  async getAll() {
-    const response = await api.get<{ data: Workshop[] }>('/workshops');
-    return response.data.data;
-  },
+  export const workshopService = {
+    async getAll() {
+      try {
+        const response = await api.get('/workshops');
+        console.log('Respuesta workshops:', response); // Debug
+        return response.data.data;
+      } catch (error) {
+        console.error('Error al obtener workshops:', error);
+        throw error;
+      }
+    },
 
   // Crear un nuevo taller
   async create(data: Omit<Workshop, 'id'>) {

@@ -1,16 +1,19 @@
 // src/lib/axios.ts
 import axios from 'axios';
 
-export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json'
   }
 });
 
-// Interceptores
+// Interceptor para agregar el token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
+  // Debug
+  console.log('Token being sent:', token);
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -18,12 +21,18 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  response => response,
+  error => {
+    // Debug
+    console.log('API Error:', error.response);
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
+
+export { api };

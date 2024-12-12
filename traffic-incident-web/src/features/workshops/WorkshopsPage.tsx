@@ -4,29 +4,42 @@ import { Building2, MapPin, Phone, Mail, Plus } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal';
 import { WorkshopForm } from './components/WorkshopForm';
 import { workshopService } from '../../services/workshop.service';
+import { useAuth } from '../../context/AuthContext';
 import { toast } from 'sonner';
 
 export const WorkshopsPage = () => {
+  // Todos los hooks primero
+  const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState(null);
   const [workshops, setWorkshops] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Funciones después de los hooks
   const loadWorkshops = async () => {
     try {
+      console.log('Token actual:', localStorage.getItem('token'));
+      console.log('Usuario actual:', localStorage.getItem('user'));
       setIsLoading(true);
       const data = await workshopService.getAll();
       setWorkshops(data);
     } catch (error) {
+      console.error('Error al cargar talleres:', error);
       toast.error('Error al cargar los talleres');
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadWorkshops();
-  }, []);
+  const handleToggleStatus = async (workshop) => {
+    try {
+      await workshopService.toggleStatus(workshop.id);
+      toast.success(`Taller ${workshop.status === 'active' ? 'desactivado' : 'activado'} exitosamente`);
+      loadWorkshops();
+    } catch (error) {
+      toast.error('Error al cambiar el estado del taller');
+    }
+  };
 
   const handleSubmit = async (data) => {
     try {
@@ -44,6 +57,12 @@ export const WorkshopsPage = () => {
       toast.error('Error al guardar el taller');
     }
   };
+
+    // useEffect después de las funciones
+    useEffect(() => {
+      console.log('Iniciando carga de workshops...');
+      loadWorkshops();
+    }, []);
 
   return (
     <div className="space-y-6">
