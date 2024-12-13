@@ -24,61 +24,61 @@ export const LoginPage = () => {
  const [errors, setErrors] = useState<Record<string, string>>({});
 
  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setIsLoading(true);
-      setErrors({});
-      
-      console.log('Intentando login con:', formData);
-      
-      const response = await authService.login(formData.email, formData.password);
-      console.log('Respuesta completa:', response);
-      console.log('Data interno:', response.data.data);  // Ver la estructura exacta
-      
-      const { token, user } = response.data.data;
-      console.log('Token:', token);  // Verificar token
-      console.log('Usuario:', user);  // Verificar datos del usuario
-      
-      // Guardar el token
-      localStorage.setItem('token', token);
-
-      // Guardar el usuario en el contexto
-      login({
-        email: user.email,
-        role: user.role
-      });
-
-      console.log('Role del usuario:', user.role);  // Verificar el role
-
-      // Redireccionar según rol
-      switch(user.role) {
-        case 'admin':
-          console.log('Redirigiendo a /admin');  // Log antes de redireccionar
-          navigate('/admin');
-          break;
-        case 'digesett':
-          navigate('/digesett');
-          break;
-        case 'insurance_agent':
-          navigate('/insurance-agent');
-          break;
-        case 'client':
-        default:
-          navigate('/user');
-      }
-
-      toast.success('Inicio de sesión exitoso');
-
-    } catch (error: any) {
-      console.error('Error durante el login:', error);
-      toast.error(error.response?.data?.message || 'Error al iniciar sesión');
-      setErrors({ 
-        general: error.response?.data?.message || 'Error al iniciar sesión' 
-      });
-    } finally {
-      setIsLoading(false);
+  e.preventDefault();
+  try {
+    setIsLoading(true);
+    setErrors({});
+    
+    console.log('Intentando login con:', formData);
+    
+    const response = await authService.login(formData.email, formData.password);
+    
+    // Validar la estructura de la respuesta
+    if (!response?.data?.data?.token || !response?.data?.data?.user) {
+      throw new Error('Respuesta inválida del servidor');
     }
-  };
+
+    const { token, user } = response.data.data;
+    
+    // Guardar el token
+    localStorage.setItem('token', token);
+
+    // Guardar el usuario en el contexto
+    login({
+      email: user.email,
+      role: user.role
+    });
+
+    // Redireccionar según rol
+    switch(user.role) {
+      case 'admin':
+        navigate('/admin');
+        break;
+      case 'digesett':
+        navigate('/digesett');
+        break;
+      case 'insurance_agent':
+        navigate('/insurance-agent');
+        break;
+      case 'client':
+      default:
+        navigate('/user');
+    }
+
+    toast.success('Inicio de sesión exitoso');
+
+  } catch (error: any) {
+    console.error('Error durante el login:', error);
+    const errorMessage = error.response?.data?.message || 
+                        error.message || 
+                        'Error al iniciar sesión';
+    
+    toast.error(errorMessage);
+    setErrors({ general: errorMessage });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
    const { name, value } = e.target;

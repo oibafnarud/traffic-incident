@@ -1,42 +1,27 @@
-// src/models/Workshop.ts
-import mongoose, { Schema, Document } from 'mongoose';
+// traffic-incident-api/src/models/Workshop.ts
+import mongoose from 'mongoose';
+import { IWorkshop } from '../interfaces/workshop.interface';
 
-export interface IWorkshop extends Document {
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  specialties: string[];
-  status: 'active' | 'inactive';
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const workshopSchema = new Schema({
+const workshopSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   address: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   phone: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   email: {
     type: String,
     required: true,
-    trim: true,
-    lowercase: true
+    unique: true
   },
   specialties: [{
-    type: String,
-    required: true
+    type: String
   }],
   status: {
     type: String,

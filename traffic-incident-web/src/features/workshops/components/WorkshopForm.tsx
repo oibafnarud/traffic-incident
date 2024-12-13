@@ -1,112 +1,77 @@
 // src/features/workshops/components/WorkshopForm.tsx
-import { useState } from 'react';
-import { Input } from '../../../components/ui/Input';
-import { Button } from '../../../components/ui/Button';
+import { useState, useEffect } from 'react';
+import { Workshop, WorkshopFormData } from '@/types/workshop';
 
 interface WorkshopFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: WorkshopFormData) => void;
   onCancel: () => void;
-  initialData?: any;
+  initialData?: Workshop | null;
 }
 
 export const WorkshopForm = ({ onSubmit, onCancel, initialData }: WorkshopFormProps) => {
-  const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    address: initialData?.address || '',
-    phone: initialData?.phone || '',
-    email: initialData?.email || '',
-    specialties: initialData?.specialties?.join(', ') || '',
-    status: initialData?.status || 'active'
+  const [formData, setFormData] = useState<WorkshopFormData>({
+    name: '',
+    address: '',
+    phone: '',
+    email: '',
+    specialties: [],
+    status: 'active'
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const specialties = formData.specialties
-      .split(',')
-      .map(s => s.trim())
-      .filter(s => s);
-
-    onSubmit({
-      ...formData,
-      specialties
-    });
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    onSubmit(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <h2 className="text-xl font-semibold">
-        {initialData ? 'Editar Taller' : 'Nuevo Taller'}
-      </h2>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Nombre</label>
+        <input
+          type="text"
+          value={formData.name}
+          onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          required
+        />
+      </div>
 
-      <Input
-        label="Nombre"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        required
-      />
+      {/* Agregar campos similares para address, phone, email */}
 
-      <Input
-        label="Dirección"
-        name="address"
-        value={formData.address}
-        onChange={handleChange}
-        required
-      />
-
-      <Input
-        label="Teléfono"
-        name="phone"
-        value={formData.phone}
-        onChange={handleChange}
-        required
-      />
-
-      <Input
-        label="Email"
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        required
-      />
-
-      <Input
-        label="Especialidades (separadas por coma)"
-        name="specialties"
-        value={formData.specialties}
-        onChange={handleChange}
-        required
-      />
-
-      <div className="flex items-center space-x-2">
-        <select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md"
-        >
-          <option value="active">Activo</option>
-          <option value="inactive">Inactivo</option>
-        </select>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Especialidades</label>
+        <input
+          type="text"
+          value={formData.specialties.join(', ')}
+          onChange={e => setFormData(prev => ({
+            ...prev,
+            specialties: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+          }))}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          placeholder="Separar por comas"
+        />
       </div>
 
       <div className="flex justify-end gap-4">
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+        >
           Cancelar
-        </Button>
-        <Button type="submit">
-          {initialData ? 'Actualizar' : 'Crear'}
-        </Button>
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+        >
+          {initialData ? 'Actualizar' : 'Crear'} Taller
+        </button>
       </div>
     </form>
   );

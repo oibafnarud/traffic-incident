@@ -1,8 +1,8 @@
 // src/controllers/workshopController.ts
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { Workshop } from '../models/Workshop';
-import { asyncHandler } from '../middleware/asyncHandler';
-import { AppError } from '../types/error';
+import { asyncHandler } from '../utils/asyncHandler';
+import { AppError } from '../utils/AppError';
 
 export const workshopController = {
   // Crear taller
@@ -71,6 +71,20 @@ export const workshopController = {
     res.json({
       status: 'success',
       data: workshop
+    });
+  }),
+
+  // Eliminar taller
+  delete: asyncHandler(async (req: Request, res: Response) => {
+    const workshop = await Workshop.findByIdAndDelete(req.params.id);
+    
+    if (!workshop) {
+      throw new AppError(404, 'Taller no encontrado');
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Taller eliminado exitosamente'
     });
   })
 };
