@@ -1,34 +1,48 @@
 // src/features/workshops/WorkshopsPage.tsx
 import { useState, useEffect } from 'react';
-import { Building2, MapPin, Phone, Mail, Plus } from 'lucide-react';
-import { Modal } from '@/components/ui/Modal';
-import { WorkshopForm } from './components/WorkshopForm';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { workshopService } from '@/services/workshop.service';
-import { Workshop } from '@/types/workshop';
 
 export const WorkshopsPage = () => {
-  const [workshops, setWorkshops] = useState<Workshop[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
+  const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const fetchWorkshops = async () => {
       try {
+        // Verificar que estemos autenticados
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.log('No hay token disponible');
+          navigate('/login');
+          return;
+        }
+
+        console.log('Iniciando fetch de talleres con token:', token);
         setLoading(true);
         const data = await workshopService.getWorkshops();
+        console.log('Datos de talleres recibidos:', data);
         setWorkshops(data);
       } catch (error: any) {
-        console.error('Error fetching workshops:', error);
-        setError(error.message || 'Error al cargar los talleres');
+        console.error('Error al obtener talleres:', error);
+        // Si es error de autenticación, manejarlo específicamente
+        if (error.response?.status === 401 || error.message.includes('autenticación')) {
+          console.log('Error de autenticación detectado');
+          navigate('/login', { state: { from: '/workshops' } });
+        } else {
+          setError(error.message || 'Error al cargar los talleres');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchWorkshops();
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (data: any) => {
     try {

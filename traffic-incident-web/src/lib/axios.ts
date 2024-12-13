@@ -5,17 +5,19 @@ import { API_URL } from '@/config/constants';
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     console.log('Token en interceptor:', token); // Debug
-    
-    if (token && config.headers) {
+
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('Headers:', config.headers); // Debug
     }
     return config;
   },
@@ -24,18 +26,21 @@ api.interceptors.request.use(
   }
 );
 
+// Response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log('Error interceptado:', error.response?.status); // Debug
+    console.log('Error response:', error.response); // Debug
     
-    // Solo manejamos el 401 si no estamos ya en la página de login
-    if (error.response?.status === 401 && !window.location.pathname.includes('/login')) {
-      // Guardamos la ruta actual para redireccionar después del login
-      localStorage.setItem('lastPath', window.location.pathname);
-      // Limpiamos datos de autenticación
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+    if (error.response?.status === 401) {
+      // No redirigir si ya estamos en login
+      if (!window.location.pathname.includes('/login')) {
+        // Mantener la ruta actual para redireccionar después del login
+        localStorage.setItem('lastPath', window.location.pathname);
+        // Solo limpiar token, no redirigir (dejemos que el componente lo maneje)
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
     return Promise.reject(error);
   }

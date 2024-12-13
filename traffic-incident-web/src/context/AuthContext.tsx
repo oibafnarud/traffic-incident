@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
@@ -10,14 +10,14 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (user: User, token: string) => void;
+  login: (userData: User, token: string) => void;
   logout: () => void;
 }
 
 // Crear el contexto
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Hook personalizado para usar el contexto
+// Hook personalizado para usar el contexto de autenticación
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -30,7 +30,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Provider component
+// Proveedor del contexto
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(() => {
     const savedUser = localStorage.getItem('user');
@@ -44,6 +44,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', token);
+    
+    // Redireccionar a la última ruta si existe
+    const lastPath = localStorage.getItem('lastPath');
+    if (lastPath) {
+      localStorage.removeItem('lastPath');
+      navigate(lastPath);
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   const logout = () => {
@@ -62,5 +71,5 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
-// Asegurarnos de exportar tanto el Provider como el hook
+// Exportar tanto el Provider como el hook
 export { AuthContext };
